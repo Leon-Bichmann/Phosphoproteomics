@@ -157,7 +157,6 @@ params.outdir = params.outdir ?: { log.warn "No output directory provided. Will 
  */
 
 ch_spectra = Channel.fromPath(params.spectra, checkIfExists: true)
-ch_database = Channel.fromPath(params.database).set{ db_for_decoy_creation }
 // ch_expdesign = Channel.fromPath(params.design, checkIfExists: true)
 
 //use a branch operator for this sort of thing and access the files accordingly!
@@ -217,7 +216,7 @@ process raw_file_conversion {
      file rawfile from branched_input.raw
 
     output:
-     file "*.mzML" into mzmls_converted
+     file "*.mzML" into (mzmls_converted, mzml_files_luciphor)
     
     
     // TODO check if this sh script is available with bioconda
@@ -269,6 +268,13 @@ if (params.expdesign)
                     ? [ Channel.empty(), Channel.empty(), Channel.empty(), Channel.empty() ]
                     : [ Channel.fromPath(params.database), Channel.fromPath(params.database), Channel.fromPath(params.database), Channel.fromPath(params.database)  ] )   
 
+if (params.add_decoys)
+{
+   Channel
+      .fromPath(params.database)
+      .set { db_for_decoy_creation }
+}
+
 //Add decoys if params.add_decoys is set appropriately
 process generate_decoy_database {
 
@@ -278,7 +284,7 @@ process generate_decoy_database {
      file(mydatabase) from db_for_decoy_creation
 
     output:
-     file "${database.baseName}_decoy.fasta" into searchengine_in_db_decoy_msgf, searchengine_in_db_decoy_comet, pepidx_in_db_decoy, plfq_in_db_decoy
+     file "${mydatabase.baseName}_decoy.fasta" into searchengine_in_db_decoy_msgf, searchengine_in_db_decoy_comet, pepidx_in_db_decoy, plfq_in_db_decoy
      file "*.log"
 
     when:
@@ -386,7 +392,10 @@ process search_engine_comet {
                    -threads ${task.cpus} \\
                    -database ${database} \\
                    -num_hits ${params.num_hits} \\
-                   > ${mzml_file.baseName}_comet.log
+                   -variable_modifications ${params.variable_mods.tokenize(',').collect { "'${it}'" }.join(" ") } \\
+                   -fixed_modifications ${params.fixed_mods.tokenize(',').collect { "'${it}'"}.join(" ")} \\
+                   -enzyme ${params.enzyme} \\
+                  > ${mzml_file.baseName}_comet.log
      """
 }
 
@@ -410,6 +419,7 @@ process index_peptides {
      PeptideIndexer -in ${id_file} \\
                     -out ${id_file.baseName}_idx.idXML \\
                     -threads ${task.cpus} \\
+                    -enzyme:name ${params.enzyme} \\
                     -fasta ${database} \\
                     > ${id_file.baseName}_index_peptides.log
      """
@@ -535,6 +545,30 @@ process idscoreswitcher {
 }
 
 
+process luciphor {
+
+    publishDir "${params.outdir}/logs", mode: 'copy', pattern: '*.log'
+
+    input:
+     file id_file from id_files_idx_feat_perc_fdr_filter_switched
+     file mzml_file_l from mzml_files_luciphor
+
+    output:
+     file "${id_file.baseName}_switched.idXML" into id_files_idx_feat_perc_fdr_filter_switched_luciphor
+     file "*.log"
+
+    when:
+     params.posterior_probabilities == "percolator"
+
+    script:
+     """
+     LuciphorAdapter    -id ${id_file} \\
+                        -in ${mzml_file_l} \\
+                        -out ${id_file.baseName}_switched.idXML \\
+                        -threads ${task.cpus} \\
+                        > ${id_file.baseName}_scoreswitcher.log
+     """
+}
 
 // ---------------------------------------------------------------------
 // Branch b) Q-values and PEP from OpenMS
@@ -703,7 +737,7 @@ process proteomicslfq {
     
     input:
      file mzmls from mzmls_plfq.toSortedList({ a, b -> b.baseName <=> a.baseName })
-     file id_files from id_files_idx_feat_perc_fdr_filter_switched
+     file id_files from id_files_idx_feat_perc_fdr_filter_switched_luciphor
          .mix(id_files_idx_ForIDPEP_fdr_switch_idpep_switch_filter_switch)
          .toSortedList({ a, b -> b.baseName <=> a.baseName })
      file expdes from expdesign

@@ -1,13 +1,13 @@
-# ![nf-core/proteomicslfq](docs/images/nf-core-proteomicslfq_logo.png)
+# ![nf-core/phosphoproteomics](docs/images/nf-core-phosphoproteomics_logo.png)
 
 **Proteomics label-free quantification (LFQ) analysis pipeline using OpenMS and MSstats, with feature quantification, feature summarization, quality control and group-based statistical analysis.**.
 
-[![GitHub Actions CI Status](https://github.com/nf-core/proteomicslfq/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/proteomicslfq/actions)
-[![GitHub Actions Linting Status](https://github.com/nf-core/proteomicslfq/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/proteomicslfq/actions)
+[![GitHub Actions CI Status](https://github.com/nf-core/phosphoproteomics/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/phosphoproteomics/actions)
+[![GitHub Actions Linting Status](https://github.com/nf-core/phosphoproteomics/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/phosphoproteomics/actions)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
-[![Docker](https://img.shields.io/docker/automated/nfcore/proteomicslfq.svg)](https://hub.docker.com/r/nfcore/proteomicslfq)
+[![Docker](https://img.shields.io/docker/automated/nfcore/phosphoproteomics.svg)](https://hub.docker.com/r/nfcore/phosphoproteomics)
 
 ## Introduction
 
@@ -22,7 +22,7 @@ ii. Install either [`Docker`](https://docs.docker.com/engine/installation/) or [
 iii. Download the pipeline and test it on a minimal dataset with a single command
 
 ```bash
-nextflow run nf-core/proteomicslfq -profile test,<docker/singularity/conda/institute>
+nextflow run nf-core/phosphoproteomics -profile test,<docker/singularity/conda/institute>
 ```
 
 > Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
@@ -32,14 +32,14 @@ iv. Start running your own analysis!
 <!-- TODO nf-core: Update the default command above used to run the pipeline -->
 
 ```bash
-nextflow run nf-core/proteomicslfq -profile <docker/singularity/conda/institute> --spectra '*.mzml' --database '*.fasta' --expdesign '*.tsv'
+nextflow run nf-core/phosphoproteomics -profile <docker/singularity/conda/institute> --spectra '*.mzml' --database '*.fasta' --expdesign '*.tsv'
 ```
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/proteomicslfq pipeline comes with documentation about the pipeline, found in the `docs/` directory:
+The nf-core/phosphoproteomics pipeline comes with documentation about the pipeline, found in the `docs/` directory:
 
 1. [Installation](https://nf-co.re/usage/installation)
 2. Pipeline configuration
@@ -54,18 +54,18 @@ The nf-core/proteomicslfq pipeline comes with documentation about the pipeline, 
 
 ## Credits
 
-nf-core/proteomicslfq was originally written by Julianus Pfeuffer, Lukas Heumos, Leon Bichmann, Timo Sachsenberg.
+nf-core/phosphoproteomics was originally written by Julianus Pfeuffer, Lukas Heumos, Leon Bichmann, Timo Sachsenberg.
 
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
-For further information or help, don't hesitate to get in touch on [Slack](https://nfcore.slack.com/channels/proteomicslfq) (you can join with [this invite](https://nf-co.re/join/slack)).
+For further information or help, don't hesitate to get in touch on [Slack](https://nfcore.slack.com/channels/phosphoproteomics) (you can join with [this invite](https://nf-co.re/join/slack)).
 
 ## Citation
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
-<!-- If you use  nf-core/proteomicslfq for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+<!-- If you use  nf-core/phosphoproteomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 You can cite the `nf-core` publication as follows:
 
